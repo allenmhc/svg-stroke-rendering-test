@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  margin: 40px;
+  width: 960px;
+  position: relative;
+}
+
+#grid {
+  position: absolute;
+}
+
+#controls {
+  position: absolute;
+  top: 510px;
+}
+
+svg {
+  background: url(pixel-grid.png);
+}
+
+rect {
+  stroke: none;
+  fill: none;
+  fill-opacity: .2;
+}
+
+</style>
+<body>
+<div id="grid"></div>
+<div id="controls">
+  <label><input type="checkbox" id="stroke"> stroke: black</label>
+  <label><input type="checkbox" id="fill"> fill: black</label>
+  <label><input type="checkbox" id="crisp-edges"> shape-rendering: crispEdges</label>
+  <label><input type="checkbox" id="offset-x"> translate(0,.5)</label>
+  <label><input type="checkbox" id="offset-y"> translate(.5,0)</label>
+  <label><input type="checkbox" id="margin-auto"> margin: auto</label>
+</div>
+<script src="d3.v2.js"></script>
+<script>
+
+var width = 960,
+    height = 500;
+
+var svg = d3.select("#grid").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var gx = svg.append("g"),
+    gy = gx.append("g");
+
+var rect = gy.selectAll("rect")
+    .data(d3.range(96 * 50))
+  .enter().append("rect")
+    .attr("x", function(d, i) { return (i % 96) * 10; })
+    .attr("y", function(d, i) { return ((i / 96) | 0) * 10; })
+    .attr("width", 10)
+    .attr("height", 10)
+    .style("display", function(d, i) { return !(i & 1) ^ (i / 96 & 1) ? "none" : null; });
+
+d3.select("#stroke").property("checked", false).on("change", function() {
+  rect.style("stroke", this.checked ? "#000" : null);
+});
+
+d3.select("#fill").property("checked", false).on("change", function() {
+  rect.style("fill", this.checked ? "#000" : null);
+});
+
+d3.select("#crisp-edges").property("checked", false).on("change", function() {
+  rect.style("shape-rendering", this.checked ? "crispEdges" : null);
+});
+
+d3.select("#offset-x").property("checked", false).on("change", function() {
+  gx.attr("transform", this.checked ? "translate(.5,0)" : null);
+});
+
+d3.select("#offset-y").property("checked", false).on("change", function() {
+  gy.attr("transform", this.checked ? "translate(0,.5)" : null);
+});
+
+d3.select("#margin-auto").property("checked", false).on("change", function() {
+  d3.select("body").style("margin", this.checked ? "40px auto" : "40px");
+});
+
+</script>
